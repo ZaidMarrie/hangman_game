@@ -1,47 +1,69 @@
-// Pick a random word
-let words = ["dynamic", "futile", "variety", "float", "mentor", "blunt"]
-let word = words[Math.floor(Math.random() * words.length)]
-
-// Create the initial state of our secret word
-let answerArray = []
-for(let i = 0; i < word.length; i++) {
-    answerArray[i] = "_";
+function pickWord() {
+    let words = ["futile", "blunt", "float"]
+    return words[Math.floor(Math.random() * words.length)]
 }
 
-// Keep track of player progress
-let remainingLetters = word.length;
+// Answer array setup function
+function setupAnswerArray(word) {
+    let answer = []
+    for (let i = 0; i < word.length; i++) {
+        answer[i] = "_"
+    }
+    return answer
+}
 
-let remainingAttempts = 10;
+// Function shows players progress
+function showPlayerProgress(answerArray) {
+    alert(answerArray)
+}
 
+// Function get the players guess 
+function getGuess() {
+    return prompt("Please enter a letter, or cancel to quit")
+}
 
-// Main game loop
-while (remainingLetters > 0 && remainingAttempts > 0) {
-    // Show the players progress
-    alert(answerArray.join(" "));
-    // Get a guess from player and make string lower case
-    let guess = prompt("Guess a letter, or click Cancel to stop playing.").toLowerCase();
-    
-    // Quit the game if the player no longer wants to play
-    if (guess === null) {
-        break;
-    } else if (guess.length !== 1) {
-        // If the guess is not one letter
-        alert("Please enter a single letter:");
-    } else {
-        // If the guess is in the word
-        for (let j = 0; j < word.length; j++) {
-            if (word[j] === guess && answerArray[j] === "_") {
-                answerArray[j] = guess
-                remainingLetters--;
-            }
+// Function updates game state 
+var updateGameState = function (guess, word, answerArray) {
+  // Update answerArray and return a number showing how many
+  // times the guess appears in the word so remainingLetters
+  // can be updated
+    let count = 0; 
+    for (let j = 0; j < word.length; j++) {
+        if (answerArray[j] == "_" && guess == word[j]) {
+            answerArray[j] = guess
+        } if (answerArray[j] == guess) {
+            count++;
         }
     }
-    remainingAttempts--;
-    alert("You have " + remainingAttempts + " tries left")
+    return count
+};
+
+// Function shows answer and congratulates player
+function showAnswerAndCongratulatePlayer(answerArray) {
+    answerArray.join("")
+    if (answerArray == word) {
+        alert(answerArray)
+        alert("Great work, the answer is " + word + "!")
+    } else {
+        alert("Sorry, you ran out of moves. Try Again")
+    }
+};
+
+
+var word = pickWord();
+var answerArray = setupAnswerArray(word);
+var remainingLetters = word.length;
+
+while (remainingLetters > 0) {
+  showPlayerProgress(answerArray);
+  var guess = getGuess();
+  if (guess === null) {
+    break;
+  } else if (guess.length !== 1) {
+    alert("Please enter a single letter.");
+  } else {
+    var correctGuesses = updateGameState(guess, word, answerArray);
+    remainingLetters -= correctGuesses;
+  }
 }
-
-
-// Congratulate the player on guessing the word
-alert(answerArray.join(" "))
-alert("Good job! The answer was " + word)
-    
+showAnswerAndCongratulatePlayer(answerArray);
